@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "814972585982",
+    "firebase_url": "https://webrtcjavacoderbeichen-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "webrtcjavacoderbeichen",
+    "storage_bucket": "webrtcjavacoderbeichen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814972585982:android:e0bfd35232121cab7922af",
+        "android_client_info": {
+          "package_name": "com.android.zkaf.webrtcjavacoderbeichen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6D2lzqj-Ox6-i4UgMgdckVbMhzzyNx-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
