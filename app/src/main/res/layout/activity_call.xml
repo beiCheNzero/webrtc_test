@@ -68,6 +68,25 @@
             android:layout_marginTop="40dp"
             android:text="call"
             android:id="@+id/ping"/>
+
+        <TextView
+            android:id="@+id/wsStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ping"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="40dp"
+            android:text="未连接"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_button"
+            android:layout_below="@id/wsStatus"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="40dp"
+            android:text="sendWs"
+            android:id="@+id/sendWs"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"

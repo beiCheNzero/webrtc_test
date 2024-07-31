@@ -59,5 +59,7 @@ dependencies {
     implementation("com.alibaba:fastjson:1.1.71.android")
     implementation("redis.clients:jedis:5.1.2")
 
+    implementation("org.greenrobot:eventbus:3.1.1")
+
     implementation(project(":myapplication"))
 }

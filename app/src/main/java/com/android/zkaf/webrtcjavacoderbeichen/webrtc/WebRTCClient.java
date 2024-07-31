@@ -472,30 +472,68 @@ public class WebRTCClient {
 //            }
 //            if (localVideoTrack != null) {
 //                localVideoTrack.dispose();
+//                localVideoTrack = null;
 //            }
 //            if (remoteVideoTrack != null) {
 //                remoteVideoTrack.dispose();
+//                remoteVideoTrack = null;
 //            }
 //            if (localAudioTrack != null) {
 //                localAudioTrack.dispose();
+//                localAudioTrack = null;
 //            }
 //            if (localVideoSource != null) {
 //                localVideoSource.dispose();
+//                localVideoSource = null;
 //            }
 //            if (localAudioSource != null) {
 //                localAudioSource.dispose();
+//                localAudioSource = null;
 //            }
 //            if (peerConnection != null) {
 //                peerConnection.close();
 //                peerConnection.dispose();
 //                peerConnection = null;
 //            }
+//            if (peerConnectionFactory != null) {
+//                peerConnectionFactory.dispose();
+//                peerConnectionFactory = null;
+//            }
             localVideoTrack.dispose();
             videoCapturer.stopCapture();
             videoCapturer.dispose();
             peerConnection.close();
+//            peerConnectionFactory.dispose();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void stopCapture() throws InterruptedException {
+//        if (videoCapturer != null) {
+//            videoCapturer.stopCapture();
+//        }
+        // 禁用视频轨道
+        Log.d("test", "startCapture: localVideoTrack===" + localVideoTrack.state());
+        if (localVideoTrack != null) {
+            localVideoTrack.setEnabled(false);
+        }
+
+        // 启用视频轨道
+//        localVideoTrack.setEnabled(true);
+    }
+
+    public void startCapture() throws InterruptedException {
+//        if (videoCapturer != null) {
+//            videoCapturer.startCapture(480,360,25);
+//        }
+        // 禁用视频轨道
+//        localVideoTrack.setEnabled(false);
+
+        // 启用视频轨道
+        Log.d("test", "startCapture: localVideoTrack===" + localVideoTrack.state());
+        if (localVideoTrack != null) {
+            localVideoTrack.setEnabled(true);
         }
     }
 
@@ -505,32 +543,74 @@ public class WebRTCClient {
         }
     }
 
-    public void recreateIceConnection(String target) {
-        if (peerConnection != null) {
-            peerConnection.createOffer(new MySdpObserver() {
-                @Override
-                public void onCreateSuccess(SessionDescription sessionDescription) {
-                    super.onCreateSuccess(sessionDescription);
-                    peerConnection.setLocalDescription(new MySdpObserver() {
-                        @Override
-                        public void onSetSuccess() {
-                            super.onSetSuccess();
-                            if (listener != null) {
-                                listener.onTransferDataToOtherPeer(new DataModels(
-                                        target, username, sessionDescription.description, DataModelType.Offer
-                                ));
-                            }
-                        }
-                    }, sessionDescription);
-                }
+    public void reconnect(PeerConnection.Observer observer, SurfaceViewRenderer localSurfaceViewRenderer) {
+        // 关闭旧的连接并释放资源
+        closeConnection();
 
-                @Override
-                public void onCreateFailure(String error) {
-                    super.onCreateFailure(error);
-                    Log.e("WebRTC", "Failed to recreate offer: " + error);
-                }
-            }, mediaConstraints);
-        }
+        // 初始化新的 PeerConnectionFactory 和 PeerConnection
+        initPeerConnectionFactory();
+        peerConnectionFactory = createPeerConnectionFactory();
+        peerConnection = createPeerConnection(observer); // 传递你的 PeerConnection.Observer
+
+        // 初始化本地视频源和音频源
+        localVideoSource = peerConnectionFactory.createVideoSource(false);
+        localAudioSource = peerConnectionFactory.createAudioSource(new MediaConstraints());
+
+        // 创建本地视频轨道
+        startLocalVideoStreaming(localSurfaceViewRenderer); // 传递你的本地 SurfaceViewRenderer
+    }
+
+//    public void recreateIceConnection(String target) {
+//        if (peerConnection != null) {
+//            peerConnection.createOffer(new MySdpObserver() {
+//                @Override
+//                public void onCreateSuccess(SessionDescription sessionDescription) {
+//                    super.onCreateSuccess(sessionDescription);
+//                    peerConnection.setLocalDescription(new MySdpObserver() {
+//                        @Override
+//                        public void onSetSuccess() {
+//                            super.onSetSuccess();
+//                            if (listener != null) {
+//                                listener.onTransferDataToOtherPeer(new DataModels(
+//                                        target, username, sessionDescription.description, DataModelType.Offer
+//                                ));
+//                            }
+//                        }
+//                    }, sessionDescription);
+//                }
+//
+//                @Override
+//                public void onCreateFailure(String error) {
+//                    super.onCreateFailure(error);
+//                    Log.e("WebRTC", "Failed to recreate offer: " + error);
+//                }
+//            }, mediaConstraints);
+//        }
+//    }
+
+    public void restartLocalVideoStreaming(SurfaceViewRenderer view) {
+        SurfaceTextureHelper helper = SurfaceTextureHelper.create(
+                Thread.currentThread().getName(), eglbaseContext
+        );
+        // 获取视频捕获器(获取前置摄像头)
+        videoCapturer = getVideoCapture();
+        // 初始化视频捕获器
+        videoCapturer.initialize(helper, context, localVideoSource.getCapturerObserver());
+        // 开始捕获视频 宽、高、帧率
+        videoCapturer.startCapture(480,360,25);
+        // 创建本地视频轨道
+        localVideoTrack = peerConnectionFactory.createVideoTrack(
+                localTrackId + "_video", localVideoSource
+        );
+        // 将视频轨道添加到渲染视图
+        localVideoTrack.addSink(view);
+
+        // 添加本地视频轨道到本地媒体流
+        localStream.addTrack(localVideoTrack);
+
+        // 确保更新PeerConnection中的本地媒体流
+        peerConnection.removeStream(localStream);
+        peerConnection.addStream(localStream);
     }
 
     public interface Listener {

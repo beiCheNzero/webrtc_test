@@ -104,24 +104,24 @@ public class LoginActivity extends AppCompatActivity {
 //                                                    }
 //                                            );
                                             mainRepository.login(views.username.getText().toString(), getApplicationContext(), () -> {
-                                                if (views.username.getText().toString().trim().equals("")) {
+                                                if (views.username.getText().toString().trim().isEmpty()) {
                                                     Toast.makeText(this, "请先填写名称", Toast.LENGTH_SHORT).show();
                                                     return;
                                                 }
-                                                if (!views.username.getText().toString().equals("")) {
-                                                    Log.d("test", "views.username.getText().toString()===" + views.username.getText().toString());
+//                                                if (!views.username.getText().toString().equals("")) {
+//                                                    Log.d("test", "views.username.getText().toString()===" + views.username.getText().toString());
                                                     // 示例操作
 //                                                    RedisManager.getInstance().setAsync(views.username.getText().toString(), "");
 //                                                    RedisPoolManager.getInstance().setAsync(views.username.getText().toString(), "");
-                                                    RedisPoolManager.getInstance().setAsync(views.username.getText().toString(), "").thenAccept(success -> {
-                                                        if (success) {
-                                                            Log.d("test", "init: set success");
-                                                            Intent intent = new Intent(LoginActivity.this, CallActivity.class);
-                                                            intent.putExtra("username", views.username.getText().toString());
-                                                            startActivity(intent);
-                                                        }
-                                                    });
-                                                }
+//                                                    RedisPoolManager.getInstance().setAsync(views.username.getText().toString(), "").thenAccept(success -> {
+//                                                        if (success) {
+//                                                            Log.d("test", "init: set success");
+                                                Intent intent = new Intent(LoginActivity.this, CallActivity.class);
+                                                intent.putExtra("username", views.username.getText().toString());
+                                                startActivity(intent);
+//                                                        }
+//                                                    });
+//                                                }
                                             });
                                         }
                                     });

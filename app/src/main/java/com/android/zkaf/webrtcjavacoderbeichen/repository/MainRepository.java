@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import com.android.zkaf.myapplication.greendao.gen.DaoSession;
 import com.android.zkaf.myapplication.greendao.gen.UserDao;
 import com.android.zkaf.myapplication.main.model.User;
+import com.android.zkaf.webrtcjavacoderbeichen.http.WebSocketSingleton;
 import com.android.zkaf.webrtcjavacoderbeichen.remote.FirebaseClient;
 import com.android.zkaf.webrtcjavacoderbeichen.utils.DataModelType;
 import com.android.zkaf.webrtcjavacoderbeichen.utils.DataModels;
@@ -35,11 +36,12 @@ public class MainRepository implements WebRTCClient.Listener {
 
     public Listener listener;
     private final Gson gson = new Gson();
-    private final FirebaseClient firebaseClient;
-    private WebRTCClient webRTCClient;
+//    private final FirebaseClient firebaseClient;
+    public WebRTCClient webRTCClient;
     private String currentUsername;
 
     private SurfaceViewRenderer remoteView;
+
     private String target;
     private PeerConnection peerConnection;
     private Context context;
@@ -51,7 +53,6 @@ public class MainRepository implements WebRTCClient.Listener {
     }
 
     private MainRepository(){
-        this.firebaseClient = new FirebaseClient();
     }
 
     private static volatile MainRepository instance;
@@ -62,6 +63,10 @@ public class MainRepository implements WebRTCClient.Listener {
         return instance;
     }
 
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
     public void setContext(Context context) {
         this.context = context;
     }
@@ -70,8 +75,8 @@ public class MainRepository implements WebRTCClient.Listener {
     }
 
     public void login(String username, Context context, SuccessCallback callback) {
-//        login(username, () -> {
-//            updateCurrentUsername(username);
+        login(username, () -> {
+            updateCurrentUsername(username);
 //            this.webRTCClient = new WebRTCClient(context, new MyPeerConnectionObserver(){
 //                @Override
 //                public void onAddStream(MediaStream mediaStream) {
@@ -118,62 +123,116 @@ public class MainRepository implements WebRTCClient.Listener {
 //                }
 //            }, username);
 //            webRTCClient.listener = this;
-//            callback.onSuccess();
-//        });
-        firebaseClient.login(username, () -> {
-            updateCurrentUsername(username);
-            this.webRTCClient = new WebRTCClient(context, new MyPeerConnectionObserver(){
-                @Override
-                public void onAddStream(MediaStream mediaStream) {
-                    super.onAddStream(mediaStream);
-                    try {
-                        Log.d("test", "mediaStream.videoTracks.get(0)===" + mediaStream.videoTracks.get(0));
-                        mediaStream.videoTracks.get(0).addSink(remoteView);
-//                        onRemoteStream(mediaStream, remoteView);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
-                    super.onConnectionChange(newState);
-                    Log.d("test", "newState===" + newState);
-                    if (newState == PeerConnection.PeerConnectionState.CONNECTING && listener != null) {
-                        listener.webrtcConnected();
-                    }
-                    if (newState == PeerConnection.PeerConnectionState.CLOSED ||
-                        newState == PeerConnection.PeerConnectionState.DISCONNECTED
-                    ) {
-                        if (listener != null){
-                            listener.webrtcClose();
-                        }
-                    }
-                }
-
-                @Override
-                public void onIceCandidate(IceCandidate iceCandidate) {
-                    super.onIceCandidate(iceCandidate);
-                    webRTCClient.sendIceCandidate(iceCandidate, target);
-                }
-
-                @Override
-                public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
-                    super.onIceConnectionChange(iceConnectionState);
-                    Log.d("test", "iceConnectionState=" + iceConnectionState);
-                    if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
-//                        Log.d("test", "iceConnectionState===" + iceConnectionState);
-                        // 处理ICE连接断开
-                        if (listener != null) {
-                            listener.webrtcClose();
-                        }
-                        webRTCClient.recreateIceConnection(target);
-                    }
-                }
-            },username);
-            webRTCClient.listener = this;
             callback.onSuccess();
         });
+//        firebaseClient.login(username, () -> {
+//            updateCurrentUsername(username);
+//            this.webRTCClient = new WebRTCClient(context, new MyPeerConnectionObserver(){
+//                @Override
+//                public void onAddStream(MediaStream mediaStream) {
+//                    super.onAddStream(mediaStream);
+//                    try {
+//                        Log.d("test", "mediaStream.videoTracks.get(0)===" + mediaStream.videoTracks.get(0));
+//                        mediaStream.videoTracks.get(0).addSink(remoteView);
+////                        onRemoteStream(mediaStream, remoteView);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                @Override
+//                public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
+//                    super.onConnectionChange(newState);
+//                    Log.d("test", "newState===" + newState);
+//                    if (newState == PeerConnection.PeerConnectionState.CONNECTING && listener != null) {
+//                        listener.webrtcConnected();
+//                    }
+//                    if (newState == PeerConnection.PeerConnectionState.CLOSED ||
+//                        newState == PeerConnection.PeerConnectionState.DISCONNECTED
+//                    ) {
+//                        if (listener != null){
+//                            listener.webrtcClose();
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void onIceCandidate(IceCandidate iceCandidate) {
+//                    super.onIceCandidate(iceCandidate);
+//                    webRTCClient.sendIceCandidate(iceCandidate, target);
+//                }
+//
+//                @Override
+//                public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
+//                    super.onIceConnectionChange(iceConnectionState);
+//                    Log.d("test", "iceConnectionState=" + iceConnectionState);
+//                    if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
+////                        Log.d("test", "iceConnectionState===" + iceConnectionState);
+//                        // 处理ICE连接断开
+//                        if (listener != null) {
+//                            listener.webrtcClose();
+//                        }
+//                        webRTCClient.recreateIceConnection(target);
+//                    }
+//                }
+//            },username);
+//            webRTCClient.listener = this;
+//            callback.onSuccess();
+//        });
+    }
+
+    public void initWebRTCClient() {
+        if (this.webRTCClient != null) {
+            Log.d("test", "initWebRTCClient: webRTCClient is not null, return");
+            return;
+        }
+        this.webRTCClient = new WebRTCClient(context, new MyPeerConnectionObserver(){
+            @Override
+            public void onAddStream(MediaStream mediaStream) {
+                super.onAddStream(mediaStream);
+                try {
+                    Log.d("test", "mediaStream.videoTracks.get(0)===" + mediaStream.videoTracks.get(0));
+                    onRemoteStream(mediaStream, remoteView);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
+                super.onConnectionChange(newState);
+                Log.d("test", "newState===" + newState);
+                if (newState == PeerConnection.PeerConnectionState.CONNECTING && listener != null) {
+                    listener.webrtcConnected();
+                }
+                if (newState == PeerConnection.PeerConnectionState.CLOSED ||
+                        newState == PeerConnection.PeerConnectionState.DISCONNECTED
+                ) {
+                    if (listener != null){
+                        listener.webrtcClose();
+                    }
+                }
+            }
+
+            @Override
+            public void onIceCandidate(IceCandidate iceCandidate) {
+                super.onIceCandidate(iceCandidate);
+                Log.d("test", "onIceCandidate: target===" + target);
+                webRTCClient.sendIceCandidate(iceCandidate, target);
+            }
+
+            @Override
+            public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
+                super.onIceConnectionChange(iceConnectionState);
+                Log.d("test", "iceConnectionState=" + iceConnectionState);
+                if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
+                    if (listener != null) {
+                        listener.webrtcClose();
+                    }
+                }
+            }
+        }, currentUsername);
+        webRTCClient.listener = this;
     }
 
     public void initLocalView(SurfaceViewRenderer view) {
@@ -187,6 +246,8 @@ public class MainRepository implements WebRTCClient.Listener {
 
     public void startCall(String target) {
         Log.d("test", "startCall: ");
+//        initWebRTCClient();
+        setTarget(target);
         webRTCClient.call(target);
     }
 
@@ -203,10 +264,14 @@ public class MainRepository implements WebRTCClient.Listener {
     }
 
     public void sendCallRequest(String target, ErrorCallback errorCallback, Context context) {
-        firebaseClient.sendMessageToOtherUser(
-                new DataModels(target, currentUsername, null, DataModelType.StartCall),errorCallback
-        );
-        sendMessageToOtherUser(new DataModels(target, currentUsername, null, DataModelType.StartCall), errorCallback);
+//        firebaseClient.sendMessageToOtherUser(
+//                new DataModels(target, currentUsername, null, DataModelType.StartCall),errorCallback
+//        );
+//        sendMessageToOtherUser(new DataModels(target, currentUsername, null, DataModelType.StartCall), errorCallback);
+        DataModels dataModel = new DataModels(target, currentUsername, null, DataModelType.StartCall);
+        String jsonMessage = gson.toJson(dataModel);
+        Log.d("MyActivity", "Received WebSocket message: " + jsonMessage);
+        WebSocketSingleton.getInstance().sendMessage(jsonMessage);
     }
 
     public void endCall() {
@@ -214,42 +279,43 @@ public class MainRepository implements WebRTCClient.Listener {
         listener.webrtcClose();
     }
     public void subscribeForLatestEvent(NewEventCallBack callBack) {
-        RedisPoolManager.getInstance().observeIncomingLatestEvent((DataModels model, String userName) -> {
-            if (model == null) {
-                Log.d("test", "model为空");
-                return;
-            } else {
-                Log.d("test", "model.getType()===" + model.getType());
-            }
-            Log.d("test", "model.getType()===" + model.getType());
-            switch (model.getType()) {
-                case Offer:
-                    this.target = model.getSender();
-                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-                            SessionDescription.Type.OFFER, model.getData()
-                    ));
-                    webRTCClient.answer(model.getSender());
-                    break;
-                case Answer:
-                    this.target = model.getSender();
-                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-                            SessionDescription.Type.ANSWER, model.getData()
-                    ));
-                    break;
-                case IceCandidate:
-                    try {
-                        IceCandidate candidate = gson.fromJson(model.getData(), IceCandidate.class);
-                        webRTCClient.addIceCandidate(candidate);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case StartCall:
-                    this.target = model.getSender();
-                    callBack.onNewEventReceived(model, currentUsername);
-                    break;
-            }
-        }, currentUsername);
+
+//        RedisPoolManager.getInstance().observeIncomingLatestEvent((DataModels model, String userName) -> {
+//            if (model == null) {
+//                Log.d("test", "model为空");
+//                return;
+//            } else {
+//                Log.d("test", "model.getType()===" + model.getType());
+//            }
+//            Log.d("test", "model.getType()===" + model.getType());
+//            switch (model.getType()) {
+//                case Offer:
+//                    this.target = model.getSender();
+//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
+//                            SessionDescription.Type.OFFER, model.getData()
+//                    ));
+//                    webRTCClient.answer(model.getSender());
+//                    break;
+//                case Answer:
+//                    this.target = model.getSender();
+//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
+//                            SessionDescription.Type.ANSWER, model.getData()
+//                    ));
+//                    break;
+//                case IceCandidate:
+//                    try {
+//                        IceCandidate candidate = gson.fromJson(model.getData(), IceCandidate.class);
+//                        webRTCClient.addIceCandidate(candidate);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    break;
+//                case StartCall:
+//                    this.target = model.getSender();
+//                    callBack.onNewEventReceived(model, currentUsername);
+//                    break;
+//            }
+//        }, currentUsername);
 //        RedisManager.getInstance().observeIncomingLatestEvent((DataModels model, String userName) -> {
 //            if (model == null) {
 //                return;
@@ -285,35 +351,35 @@ public class MainRepository implements WebRTCClient.Listener {
 //                    break;
 //            }
 //        }, currentUsername);
-        firebaseClient.observeIncomingLatestEvent((model, username) -> {
-            switch (model.getType()){
-                case Offer:
-                    this.target = model.getSender();
-                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-                            SessionDescription.Type.OFFER,model.getData()
-                    ));
-                    webRTCClient.answer(model.getSender());
-                    break;
-                case Answer:
-                    this.target = model.getSender();
-                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-                            SessionDescription.Type.ANSWER,model.getData()
-                    ));
-                    break;
-                case IceCandidate:
-                    try{
-                        IceCandidate candidate = gson.fromJson(model.getData(),IceCandidate.class);
-                        webRTCClient.addIceCandidate(candidate);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    break;
-                case StartCall:
-                    this.target = model.getSender();
-                    callBack.onNewEventReceived(model, currentUsername);
-                    break;
-            }
-        });
+//        firebaseClient.observeIncomingLatestEvent((model, username) -> {
+//            switch (model.getType()){
+//                case Offer:
+//                    this.target = model.getSender();
+//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
+//                            SessionDescription.Type.OFFER,model.getData()
+//                    ));
+//                    webRTCClient.answer(model.getSender());
+//                    break;
+//                case Answer:
+//                    this.target = model.getSender();
+//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
+//                            SessionDescription.Type.ANSWER,model.getData()
+//                    ));
+//                    break;
+//                case IceCandidate:
+//                    try{
+//                        IceCandidate candidate = gson.fromJson(model.getData(),IceCandidate.class);
+//                        webRTCClient.addIceCandidate(candidate);
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                    break;
+//                case StartCall:
+//                    this.target = model.getSender();
+//                    callBack.onNewEventReceived(model, currentUsername);
+//                    break;
+//            }
+//        });
     }
 
     public void toggleVideoScreenSize(SurfaceViewRenderer remoteView, SurfaceViewRenderer localView, FrameLayout frameLayout) {
@@ -345,8 +411,9 @@ public class MainRepository implements WebRTCClient.Listener {
         RedisPoolManager.getInstance().existsAsync(dataModels.getTarget(), activity).thenAccept(exists -> {
             String message = exists ? "Key '" + dataModels.getTarget() + "' exists" : "Key '" + dataModels.getTarget() + "' does not exist";
             if (exists) {
-                String key = dataModels.getTarget();
-                RedisPoolManager.getInstance().setAsync(key, gson.toJson(dataModels));
+//                String key = dataModels.getTarget();
+//                RedisPoolManager.getInstance().setAsync(key, gson.toJson(dataModels));
+                WebSocketSingleton.getInstance().sendMessage(gson.toJson(dataModels));
             } else {
                 errorCallback.onError();
             }
@@ -432,8 +499,9 @@ public class MainRepository implements WebRTCClient.Listener {
 
     @Override
     public void onTransferDataToOtherPeer(DataModels model) {
-        firebaseClient.sendMessageToOtherUser(model,() -> {});
-        sendMessageToOtherUser(model,() -> {});
+//        firebaseClient.sendMessageToOtherUser(model,() -> {});
+//        sendMessageToOtherUser(model,() -> {});
+        WebSocketSingleton.getInstance().sendMessage(gson.toJson(model));
     }
 
     public void login(String username, SuccessCallback callback) {
@@ -456,6 +524,18 @@ public class MainRepository implements WebRTCClient.Listener {
             }
             Log.d("MainActivity", "exists2===" + exists);
         });
+    }
+
+    public void stopCapture() throws InterruptedException {
+        webRTCClient.stopCapture();
+    }
+
+    public void startCapture() throws InterruptedException {
+        webRTCClient.startCapture();
+    }
+
+    public void restartLocalVideoStreaming(SurfaceViewRenderer localView) {
+        webRTCClient.restartLocalVideoStreaming(localView);
     }
 
     public interface Listener {
