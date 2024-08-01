@@ -182,10 +182,10 @@ public class MainRepository implements WebRTCClient.Listener {
     }
 
     public void initWebRTCClient() {
-        if (this.webRTCClient != null) {
-            Log.d("test", "initWebRTCClient: webRTCClient is not null, return");
-            return;
-        }
+//        if (this.webRTCClient != null) {
+//            Log.d("test", "initWebRTCClient: webRTCClient is not null, return");
+//            return;
+//        }
         this.webRTCClient = new WebRTCClient(context, new MyPeerConnectionObserver(){
             @Override
             public void onAddStream(MediaStream mediaStream) {
@@ -246,7 +246,6 @@ public class MainRepository implements WebRTCClient.Listener {
 
     public void startCall(String target) {
         Log.d("test", "startCall: ");
-//        initWebRTCClient();
         setTarget(target);
         webRTCClient.call(target);
     }
@@ -278,108 +277,9 @@ public class MainRepository implements WebRTCClient.Listener {
         webRTCClient.closeConnection();
         listener.webrtcClose();
     }
-    public void subscribeForLatestEvent(NewEventCallBack callBack) {
 
-//        RedisPoolManager.getInstance().observeIncomingLatestEvent((DataModels model, String userName) -> {
-//            if (model == null) {
-//                Log.d("test", "model为空");
-//                return;
-//            } else {
-//                Log.d("test", "model.getType()===" + model.getType());
-//            }
-//            Log.d("test", "model.getType()===" + model.getType());
-//            switch (model.getType()) {
-//                case Offer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.OFFER, model.getData()
-//                    ));
-//                    webRTCClient.answer(model.getSender());
-//                    break;
-//                case Answer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.ANSWER, model.getData()
-//                    ));
-//                    break;
-//                case IceCandidate:
-//                    try {
-//                        IceCandidate candidate = gson.fromJson(model.getData(), IceCandidate.class);
-//                        webRTCClient.addIceCandidate(candidate);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    break;
-//                case StartCall:
-//                    this.target = model.getSender();
-//                    callBack.onNewEventReceived(model, currentUsername);
-//                    break;
-//            }
-//        }, currentUsername);
-//        RedisManager.getInstance().observeIncomingLatestEvent((DataModels model, String userName) -> {
-//            if (model == null) {
-//                return;
-//            } else {
-//                Log.d("test", "model.getType()===" + model.getType());
-//            }
-//            Log.d("test", "model.getType()===" + model.getType());
-//            switch (model.getType()) {
-//                case Offer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.OFFER, model.getData()
-//                    ));
-//                    webRTCClient.answer(model.getSender());
-//                    break;
-//                case Answer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.ANSWER, model.getData()
-//                    ));
-//                    break;
-//                case IceCandidate:
-//                    try {
-//                        IceCandidate candidate = gson.fromJson(model.getData(), IceCandidate.class);
-//                        webRTCClient.addIceCandidate(candidate);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    break;
-//                case StartCall:
-//                    this.target = model.getSender();
-//                    callBack.onNewEventReceived(model, currentUsername);
-//                    break;
-//            }
-//        }, currentUsername);
-//        firebaseClient.observeIncomingLatestEvent((model, username) -> {
-//            switch (model.getType()){
-//                case Offer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.OFFER,model.getData()
-//                    ));
-//                    webRTCClient.answer(model.getSender());
-//                    break;
-//                case Answer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.ANSWER,model.getData()
-//                    ));
-//                    break;
-//                case IceCandidate:
-//                    try{
-//                        IceCandidate candidate = gson.fromJson(model.getData(),IceCandidate.class);
-//                        webRTCClient.addIceCandidate(candidate);
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                    break;
-//                case StartCall:
-//                    this.target = model.getSender();
-//                    callBack.onNewEventReceived(model, currentUsername);
-//                    break;
-//            }
-//        });
+    public void closeConnection() {
+        webRTCClient.closeConnection();
     }
 
     public void toggleVideoScreenSize(SurfaceViewRenderer remoteView, SurfaceViewRenderer localView, FrameLayout frameLayout) {
@@ -392,126 +292,13 @@ public class MainRepository implements WebRTCClient.Listener {
         webRTCClient.onRemoteStream(stream, remoteView);
     }
 
-    public void sendMessageToOtherUser(DataModels dataModels , ErrorCallback errorCallback) {
-//        redisManager = RedisManager.getInstance();
-        Log.d("test", "dataModels.getTarget()===" + dataModels.getTarget());
-//        CompletableFuture<Boolean> existsFuture = RedisPoolManager.getInstance().existsAsync(dataModels.getTarget(), activity);
-//        existsFuture.thenApply(exists -> {
-//            // 在这里处理 exists 的值，例如更新 UI 或者进行其他逻辑操作
-//            Log.d("test", "existsexistsexistsexists===" + exists);
-//            if (exists) {
-////                String key = dataModels.getTarget() + ":" + "LATEST_EVENT_FIELD_NAME";
-//                String key = dataModels.getTarget();
-//                RedisPoolManager.getInstance().setAsync(key, gson.toJson(dataModels));
-//            } else {
-//                errorCallback.onError();
-//            }
-//            return null;
-//        });
-        RedisPoolManager.getInstance().existsAsync(dataModels.getTarget(), activity).thenAccept(exists -> {
-            String message = exists ? "Key '" + dataModels.getTarget() + "' exists" : "Key '" + dataModels.getTarget() + "' does not exist";
-            if (exists) {
-//                String key = dataModels.getTarget();
-//                RedisPoolManager.getInstance().setAsync(key, gson.toJson(dataModels));
-                WebSocketSingleton.getInstance().sendMessage(gson.toJson(dataModels));
-            } else {
-                errorCallback.onError();
-            }
-            Log.d("MainActivity", "exists===" + exists);
-        });
-
-
-//        DaoSession daoSession = getDaoSession(context);
-//        DataModelDao dataModelDao = daoSession.getDataModelDao();
-//
-//        // 查询目标用户是否存在
-//        List<DataModel> targetUserList = dataModelDao.queryBuilder()
-//                .where(DataModelDao.Properties.Target.eq(dataModels.getTarget()))
-//                .list();
-//
-//        if (!targetUserList.isEmpty()) {
-//            // 目标用户存在，更新数据
-//            DataModel targetUser = targetUserList.get(0);
-//            targetUser.setLatestEventField(gson.toJson(dataModels));
-//            dataModelDao.update(targetUser);
-//        } else {
-//            // 目标用户不存在，返回错误
-//            errorCallback.onError();
-//        }
-    }
-
-//    public void observeIncomingLatestEvent(String username, NewEventCallBack newEventCallBack, Context context) {
-//        redisManager.observeIncomingLatestEvent(username, model -> {
-//            Log.d("test", "model.getType()===" + model.getType());
-//            switch (model.getType()) {
-//
-//                case Offer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.OFFER, model.getData()
-//                    ));
-//                    webRTCClient.answer(model.getSender());
-//                    break;
-//                case Answer:
-//                    this.target = model.getSender();
-//                    webRTCClient.onRemoteSessionReceived(new SessionDescription(
-//                            SessionDescription.Type.ANSWER, model.getData()
-//                    ));
-//                    break;
-//                case IceCandidate:
-//                    try {
-//                        IceCandidate candidate = gson.fromJson(model.getData(), IceCandidate.class);
-//                        webRTCClient.addIceCandidate(candidate);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    break;
-//                case StartCall:
-//                    this.target = model.getSender();
-//                    callBack.onNewEventReceived(model);
-//                    break;
-//            }
-//        });
-//        );
-////        DaoSession daoSession = getDaoSession(context);
-////        DataModelDao dataModelDao = daoSession.getDataModelDao();
-////
-////        runnable = new Runnable() {
-////            @Override
-////            public void run() {
-////                List<DataModel> dataModel = dataModelDao.queryBuilder()
-////                        .where(DataModelDao.Properties.Target.eq(currentUsername))
-////                        .list();
-////
-////                if (!dataModel.isEmpty()) {
-////                    DataModels latestDataModel = gson.fromJson(String.valueOf(dataModel.get(0)), DataModels.class);
-////                    newEventCallBack.onNewEventReceived(latestDataModel);
-////                }
-////
-////                // Schedule the next poll
-////                handler.postDelayed(this, POLL_INTERVAL);
-////            }
-////        };
-////
-////        // Start the polling
-////        handler.post(runnable);
-//    }
-
     @Override
     public void onTransferDataToOtherPeer(DataModels model) {
-//        firebaseClient.sendMessageToOtherUser(model,() -> {});
-//        sendMessageToOtherUser(model,() -> {});
         WebSocketSingleton.getInstance().sendMessage(gson.toJson(model));
     }
 
     public void login(String username, SuccessCallback callback) {
         callback.onSuccess();
-    }
-
-    public User getUserByUsername(String username) {
-        DaoSession daoSession = getDaoSession(context);
-        UserDao userDao = daoSession.getUserDao();
-        return userDao.queryBuilder().where(UserDao.Properties.Username.eq(username)).unique();
     }
 
     public void setNull(String key, ErrorCallback errorCallback) {
