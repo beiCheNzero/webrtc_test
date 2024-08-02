@@ -10,11 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.zkaf.myapplication.greendao.gen.DaoSession;
-import com.android.zkaf.myapplication.greendao.gen.TestBeichenDao;
-import com.android.zkaf.myapplication.greendao.gen.UserDao;
-import com.android.zkaf.myapplication.main.model.TestBeichen;
-import com.android.zkaf.myapplication.main.model.User;
 import com.android.zkaf.webrtcjavacoderbeichen.R;
 import com.android.zkaf.webrtcjavacoderbeichen.databinding.ActivityLoginBinding;
 import com.android.zkaf.webrtcjavacoderbeichen.repository.MainRepository;
@@ -29,7 +24,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.UnifiedJedis;
 
-import org.greenrobot.greendao.query.Query;
 import org.json.JSONStringer;
 
 import java.util.HashMap;
@@ -38,8 +32,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static com.android.zkaf.myapplication.main.db.GreenDaoHelper.getDaoSession;
 
 public class LoginActivity extends AppCompatActivity {
 

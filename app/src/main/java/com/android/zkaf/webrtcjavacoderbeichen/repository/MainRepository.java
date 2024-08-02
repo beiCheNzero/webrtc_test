@@ -5,9 +5,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.FrameLayout;
 
-import com.android.zkaf.myapplication.greendao.gen.DaoSession;
-import com.android.zkaf.myapplication.greendao.gen.UserDao;
-import com.android.zkaf.myapplication.main.model.User;
 import com.android.zkaf.webrtcjavacoderbeichen.http.WebSocketSingleton;
 import com.android.zkaf.webrtcjavacoderbeichen.remote.FirebaseClient;
 import com.android.zkaf.webrtcjavacoderbeichen.utils.DataModelType;
@@ -26,8 +23,6 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
-
-import static com.android.zkaf.myapplication.main.db.GreenDaoHelper.getDaoSession;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -299,18 +294,6 @@ public class MainRepository implements WebRTCClient.Listener {
 
     public void login(String username, SuccessCallback callback) {
         callback.onSuccess();
-    }
-
-    public void setNull(String key, ErrorCallback errorCallback) {
-        RedisPoolManager.getInstance().existsAsync(key, activity).thenAccept(exists -> {
-            Log.d("test", "setNull: " + exists);
-            if (exists) {
-                RedisPoolManager.getInstance().setAsync(key, "");
-            } else {
-                errorCallback.onError();
-            }
-            Log.d("MainActivity", "exists2===" + exists);
-        });
     }
 
     public void stopCapture() throws InterruptedException {

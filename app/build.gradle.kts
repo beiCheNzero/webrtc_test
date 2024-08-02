@@ -1,3 +1,4 @@
+apply(from = "https://cdn.mesibo.com/android/mesibo.gradle")
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
@@ -52,6 +53,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     // webrtc
     implementation("com.mesibo.api:webrtc:1.0.5")
+//    implementation("com.mesibo.api:webrtc:${project.ext["MesiboVersion_Api"]}")
     // 权限
     implementation("com.guolindev.permissionx:permissionx:1.6.1")
     // ws
@@ -61,5 +63,5 @@ dependencies {
 
     implementation("org.greenrobot:eventbus:3.1.1")
 
-    implementation(project(":myapplication"))
+//    implementation(project(":myapplication"))
 }

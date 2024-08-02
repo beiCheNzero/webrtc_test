@@ -93,13 +93,13 @@ public class WebRTCClient {
         // 设置媒体约束
         // mandatory: 强制约束条件
         // 指示在创建SDP时要包含视频接收通道。
-//        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
         mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
-        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
-        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_ECHO_CANCELLATION_CONSTRAINT,"true"));
-        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_NOISE_SUPPRESSION_CONSTRAINT,"true"));
-        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_AUTO_GAIN_CONTROL_CONSTRAINT,"false"));
-        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_HIGH_PASS_FILTER_CONSTRAINT,"true"));
+//        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
+//        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
+//        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_ECHO_CANCELLATION_CONSTRAINT,"true"));
+//        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_NOISE_SUPPRESSION_CONSTRAINT,"true"));
+//        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_AUTO_GAIN_CONTROL_CONSTRAINT,"false"));
+//        mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(AUDIO_HIGH_PASS_FILTER_CONSTRAINT,"true"));
 
         peerConnection.getStats(new RTCStatsCollectorCallback() {
             @Override
@@ -121,7 +121,8 @@ public class WebRTCClient {
 //                                .setFieldTrials("WebRTC-VP9-Enabled/Disabled/")
 //                                .setFieldTrials("WebRTC-Aec3/Enabled/")
 //                                .setFieldTrials("WebRTC-H264MainProfile/Enabled/WebRTC-Aec3/Enabled/")
-                                .setFieldTrials("WebRTC-H264Simulcast/Enabled/")
+//                                .setFieldTrials("WebRTC-H264Simulcast/Enabled/")
+                                .setFieldTrials("WebRTC-UseNewWebRTC=true")
                                 .setEnableInternalTracer(true).createInitializationOptions();
         PeerConnectionFactory.initialize(options);
     }
@@ -232,7 +233,7 @@ public class WebRTCClient {
         // 遍历设备名称列表
         for(String device : deviceNames) {
             // 检查设备是否是前置摄像头
-            if (enumerator.isBackFacing(device)) {
+            if (enumerator.isFrontFacing(device)) {
                 // 创建前置摄像头捕获器
                 CameraVideoCapturer cameraVideoCapturer = enumerator.createCapturer(device, null);
                 if (cameraVideoCapturer != null) {
