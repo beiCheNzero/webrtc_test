@@ -5,9 +5,9 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.FrameLayout;
 
-import com.android.zkaf.myapplication.greendao.gen.DaoSession;
-import com.android.zkaf.myapplication.greendao.gen.UserDao;
-import com.android.zkaf.myapplication.main.model.User;
+import com.android.zkaf.webrtcjavacoderbeichen.TCP.TcpClientSingleton;
+import com.android.zkaf.webrtcjavacoderbeichen.TCP.TcpServer;
+import com.android.zkaf.webrtcjavacoderbeichen.UDP.UDPClient;
 import com.android.zkaf.webrtcjavacoderbeichen.http.WebSocketSingleton;
 import com.android.zkaf.webrtcjavacoderbeichen.remote.FirebaseClient;
 import com.android.zkaf.webrtcjavacoderbeichen.utils.DataModelType;
@@ -16,6 +16,7 @@ import com.android.zkaf.webrtcjavacoderbeichen.utils.ErrorCallback;
 import com.android.zkaf.webrtcjavacoderbeichen.utils.NewEventCallBack;
 import com.android.zkaf.webrtcjavacoderbeichen.utils.RedisPoolManager;
 import com.android.zkaf.webrtcjavacoderbeichen.utils.SuccessCallback;
+import com.android.zkaf.webrtcjavacoderbeichen.utils.Utils;
 import com.android.zkaf.webrtcjavacoderbeichen.webrtc.MyPeerConnectionObserver;
 import com.android.zkaf.webrtcjavacoderbeichen.webrtc.MySdpObserver;
 import com.android.zkaf.webrtcjavacoderbeichen.webrtc.WebRTCClient;
@@ -26,8 +27,6 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
-
-import static com.android.zkaf.myapplication.main.db.GreenDaoHelper.getDaoSession;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -55,7 +54,7 @@ public class MainRepository implements WebRTCClient.Listener {
     private MainRepository(){
     }
 
-    private static volatile MainRepository instance;
+    private static MainRepository instance;
     public static MainRepository getInstance() {
         if (instance == null) {
             instance = new MainRepository();
@@ -182,17 +181,15 @@ public class MainRepository implements WebRTCClient.Listener {
     }
 
     public void initWebRTCClient() {
-//        if (this.webRTCClient != null) {
-//            Log.d("test", "initWebRTCClient: webRTCClient is not null, return");
-//            return;
-//        }
         this.webRTCClient = new WebRTCClient(context, new MyPeerConnectionObserver(){
             @Override
             public void onAddStream(MediaStream mediaStream) {
                 super.onAddStream(mediaStream);
                 try {
-                    Log.d("test", "mediaStream.videoTracks.get(0)===" + mediaStream.videoTracks.get(0));
-                    onRemoteStream(mediaStream, remoteView);
+//                    Log.d("test", "mediaStream.videoTracks.get(0)===" + mediaStream.videoTracks.get(0));
+//                    onRemoteStream(mediaStream, remoteView);
+
+                    mediaStream.videoTracks.get(0).addSink(remoteView);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -227,7 +224,8 @@ public class MainRepository implements WebRTCClient.Listener {
                 Log.d("test", "iceConnectionState=" + iceConnectionState);
                 if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
                     if (listener != null) {
-                        listener.webrtcClose();
+                        endCall();
+//                        listener.webrtcClose();
                     }
                 }
             }
@@ -270,7 +268,7 @@ public class MainRepository implements WebRTCClient.Listener {
         DataModels dataModel = new DataModels(target, currentUsername, null, DataModelType.StartCall);
         String jsonMessage = gson.toJson(dataModel);
         Log.d("MyActivity", "Received WebSocket message: " + jsonMessage);
-        WebSocketSingleton.getInstance().sendMessage(jsonMessage);
+//        WebSocketSingleton.getInstance().sendMessage(jsonMessage);
     }
 
     public void endCall() {
@@ -294,35 +292,27 @@ public class MainRepository implements WebRTCClient.Listener {
 
     @Override
     public void onTransferDataToOtherPeer(DataModels model) {
-        WebSocketSingleton.getInstance().sendMessage(gson.toJson(model));
+//        WebSocketSingleton.getInstance().sendMessage(gson.toJson(model));
+        try {
+//            UDPClient udpClient = UDPClient.getInstance(target);
+//            udpClient.receiveMessage();
+//            udpClient.sendMessage(gson.toJson(model));
+
+            TcpClientSingleton tcpClient = TcpClientSingleton.getInstance(model.getTarget(), 5000);
+
+            // Send the message
+            tcpClient.sendMessage(gson.toJson(model));
+
+//            TcpServer tcpServer = TcpServer.getInstance();
+//            tcpServer.sendMessageToClient(gson.toJson(model));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void login(String username, SuccessCallback callback) {
         callback.onSuccess();
-    }
-
-    public void setNull(String key, ErrorCallback errorCallback) {
-        RedisPoolManager.getInstance().existsAsync(key, activity).thenAccept(exists -> {
-            Log.d("test", "setNull: " + exists);
-            if (exists) {
-                RedisPoolManager.getInstance().setAsync(key, "");
-            } else {
-                errorCallback.onError();
-            }
-            Log.d("MainActivity", "exists2===" + exists);
-        });
-    }
-
-    public void stopCapture() throws InterruptedException {
-        webRTCClient.stopCapture();
-    }
-
-    public void startCapture() throws InterruptedException {
-        webRTCClient.startCapture();
-    }
-
-    public void restartLocalVideoStreaming(SurfaceViewRenderer localView) {
-        webRTCClient.restartLocalVideoStreaming(localView);
     }
 
     public interface Listener {

@@ -48,6 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:hint="who to call ?"
+            android:text="192.168.1.167"
             android:layout_margin="30dp"
             android:id="@+id/targetUserNameEt"/>
         <androidx.appcompat.widget.AppCompatButton
@@ -88,84 +89,84 @@
             android:text="sendWs"
             android:id="@+id/sendWs"/>
     </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:id="@+id/callLayout"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_height="match_parent">
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:id="@+id/callLayout"-->
+<!--        android:visibility="gone"-->
+<!--        tools:visibility="visible"-->
+<!--        android:layout_height="match_parent">-->
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/controls">
-            <org.webrtc.SurfaceViewRenderer
-                android:id="@+id/remote_view"
-                style="@style/ScreenFullViewStyle"/>
+<!--        <FrameLayout-->
+<!--            android:id="@+id/frameLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_above="@+id/controls">-->
+<!--            <org.webrtc.SurfaceViewRenderer-->
+<!--                android:id="@+id/remote_view"-->
+<!--                style="@style/ScreenFullViewStyle"/>-->
 
-            <org.webrtc.SurfaceViewRenderer
-                android:id="@+id/local_view"
-                style="@style/ScreenHalfFullViewStyle" />
-        </FrameLayout>
+<!--            <org.webrtc.SurfaceViewRenderer-->
+<!--                android:id="@+id/local_view"-->
+<!--                style="@style/ScreenHalfFullViewStyle" />-->
+<!--        </FrameLayout>-->
 
-        <LinearLayout
-            android:gravity="center"
-            android:background="@drawable/curve_background"
-            android:backgroundTint="@android:color/secondary_text_light"
-            android:id="@+id/controls"
-            android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/mic_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="12dp"
-                android:background="@drawable/circle_background"
-                app:backgroundTint="@color/cardview_dark_background"
-                app:srcCompat="@drawable/ic_baseline_mic_off_24" />
-            <ImageView
-                android:id="@+id/video_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="12dp"
-                android:background="@drawable/circle_background"
-                app:backgroundTint="@color/cardview_dark_background"
-                app:srcCompat="@drawable/ic_baseline_videocam_off_24" />
-            <ImageView
-                android:id="@+id/end_call_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="12dp"
-                android:background="@drawable/circle_background"
-                app:backgroundTint="@android:color/holo_red_dark"
-                app:srcCompat="@drawable/ic_baseline_call_end_24" />
-            <ImageView
-                android:id="@+id/switch_camera_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="12dp"
-                android:background="@drawable/circle_background"
-                app:backgroundTint="@color/cardview_dark_background"
-                app:srcCompat="@drawable/ic_baseline_cameraswitch_24" />
-        </LinearLayout>
+<!--        <LinearLayout-->
+<!--            android:gravity="center"-->
+<!--            android:background="@drawable/curve_background"-->
+<!--            android:backgroundTint="@android:color/secondary_text_light"-->
+<!--            android:id="@+id/controls"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
+<!--            <ImageView-->
+<!--                android:id="@+id/mic_button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:padding="12dp"-->
+<!--                android:background="@drawable/circle_background"-->
+<!--                app:backgroundTint="@color/cardview_dark_background"-->
+<!--                app:srcCompat="@drawable/ic_baseline_mic_off_24" />-->
+<!--            <ImageView-->
+<!--                android:id="@+id/video_button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:padding="12dp"-->
+<!--                android:background="@drawable/circle_background"-->
+<!--                app:backgroundTint="@color/cardview_dark_background"-->
+<!--                app:srcCompat="@drawable/ic_baseline_videocam_off_24" />-->
+<!--            <ImageView-->
+<!--                android:id="@+id/end_call_button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:padding="12dp"-->
+<!--                android:background="@drawable/circle_background"-->
+<!--                app:backgroundTint="@android:color/holo_red_dark"-->
+<!--                app:srcCompat="@drawable/ic_baseline_call_end_24" />-->
+<!--            <ImageView-->
+<!--                android:id="@+id/switch_camera_button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:padding="12dp"-->
+<!--                android:background="@drawable/circle_background"-->
+<!--                app:backgroundTint="@color/cardview_dark_background"-->
+<!--                app:srcCompat="@drawable/ic_baseline_cameraswitch_24" />-->
+<!--        </LinearLayout>-->
 
-    </RelativeLayout>
+<!--    </RelativeLayout>-->
 
 
 </RelativeLayout>
