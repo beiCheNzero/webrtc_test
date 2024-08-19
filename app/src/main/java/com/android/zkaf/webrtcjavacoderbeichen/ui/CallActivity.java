@@ -11,6 +11,10 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.android.zkaf.webrtcjavacoderbeichen.R;
+import com.android.zkaf.webrtcjavacoderbeichen.TCP.TcpClientSingleton;
+import com.android.zkaf.webrtcjavacoderbeichen.TCP.TcpServer;
+import com.android.zkaf.webrtcjavacoderbeichen.UDP.UDPClient;
+import com.android.zkaf.webrtcjavacoderbeichen.UDP.UDPServer;
 import com.android.zkaf.webrtcjavacoderbeichen.databinding.ActivityCallBinding;
 import com.android.zkaf.webrtcjavacoderbeichen.databinding.ActivityLoginBinding;
 import com.android.zkaf.webrtcjavacoderbeichen.http.JWebSocketClient;
@@ -42,6 +46,9 @@ public class CallActivity extends AppCompatActivity {
    private ActivityCallBinding views;
    private String username;
    private Gson gson;
+   private UDPClient udpClient;
+   private UDPServer udpServer;
+   private TcpClientSingleton tcpClient;
 
 
    @Override
@@ -60,6 +67,15 @@ public class CallActivity extends AppCompatActivity {
 
       gson = new Gson();
 
+      try {
+//         udpServer = new UDPServer(12345); // 端口号
+//         udpServer.start();
+
+         // 创建并启动 TCP 服务器
+         TcpServer.getInstance().startServer();
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
 //      init();
       WebSocketSingleton.getInstance().initWebSocket("192.168.1.216", "8765");
       views.callBtn.setOnClickListener(v -> {
@@ -68,10 +84,29 @@ public class CallActivity extends AppCompatActivity {
             Toast.makeText(this, "你不能呼叫自己", Toast.LENGTH_SHORT).show();
             return;
          }
+//         try {
+//            udpClient = UDPClient.getInstance(targetIp); // 服务端 IP 和端口号
+//            udpClient.receiveMessage(); // 开始监听服务端消息
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//         }
          DataModels dataModel = new DataModels(targetIp, Utils.getLocalIpAddress(), null, DataModelType.StartCall);
          String jsonMessage = gson.toJson(dataModel);
          Log.d("MyActivity", "Received WebSocket message: " + jsonMessage);
-         WebSocketSingleton.getInstance().sendMessage(jsonMessage);
+
+//         WebSocketSingleton.getInstance().sendMessage(jsonMessage);
+
+
+         // Initialize the TcpClientSingleton instance
+         TcpClientSingleton tcpClient = TcpClientSingleton.getInstance(targetIp, 5000);
+
+         // Send the message
+         tcpClient.sendMessage(jsonMessage);
+         try {
+//            udpClient.sendMessage(jsonMessage);
+         } catch (Exception e) {
+            throw new RuntimeException(e);
+         }
       });
       views.ping.setOnClickListener(v -> {
          Log.d("test", "username: " + username);
@@ -198,8 +233,22 @@ public class CallActivity extends AppCompatActivity {
                views.acceptButton.setOnClickListener(v -> {
                   // 开始呼叫
                   Log.d("test", "init: 开始呼叫");
-//                  mainRepository.startCall(dataModels.getSender());
-                  WebSocketSingleton.getInstance().sendMessage(gson.toJson(new DataModels(dataModels.getTarget(), Utils.getLocalIpAddress(), "", DataModelType.Jump)));
+//                  mainRepository.startCall(dataModels.getSender())
+
+//                  WebSocketSingleton.getInstance().sendMessage(gson.toJson(new DataModels(dataModels.getTarget(), Utils.getLocalIpAddress(), "", DataModelType.Jump)));
+
+                  try {
+//                     udpClient = UDPClient.getInstance(dataModels.getSender());
+//                     udpClient.sendMessage(gson.toJson(new DataModels(dataModels.getSender(), Utils.getLocalIpAddress(), "", DataModelType.Jump)));
+
+//                     TcpClientSingleton tcpClient = TcpClientSingleton.getInstance(dataModels.getTarget(), 5000);
+//                     tcpClient.sendMessage(gson.toJson(new DataModels(dataModels.getSender(), Utils.getLocalIpAddress(), "", DataModelType.Jump)));
+
+                     TcpServer tcpServer = TcpServer.getInstance();
+                     tcpServer.sendMessageToClient(gson.toJson(new DataModels(dataModels.getSender(), Utils.getLocalIpAddress(), "", DataModelType.Jump)));
+                  } catch (Exception e) {
+                     throw new RuntimeException(e);
+                  }
                   Intent intent = new Intent(CallActivity.this, VideoScreen.class);
                   intent.putExtra("target", dataModels.getSender());
                   startActivity(intent);
