@@ -133,7 +133,7 @@ public class VideoScreen extends AppCompatActivity implements MainRepository.Lis
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWebSocketMessage(WebSocketSingleton.WebSocketMessageEvent event) {
         Log.d("MyActivity", "Received WebSocket message: " + event.message);
-//        Log.d("MyActivity", "Received WebSocket message: " + gson.fromJson(event.message, DataModels.class));
+        Log.d("MyActivity", "Received WebSocket message: " + gson.fromJson(event.message, DataModels.class));
         DataModels dataModels = gson.fromJson(event.message, DataModels.class);
         Log.d("MyActivity", "Received WebSocket message: " + dataModels.getType());
 

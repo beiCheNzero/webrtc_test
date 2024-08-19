@@ -76,7 +76,6 @@ public class CallActivity extends AppCompatActivity {
       } catch (Exception e) {
          e.printStackTrace();
       }
-
 //      init();
       WebSocketSingleton.getInstance().initWebSocket("192.168.1.216", "8765");
       views.callBtn.setOnClickListener(v -> {
@@ -234,7 +233,7 @@ public class CallActivity extends AppCompatActivity {
                views.acceptButton.setOnClickListener(v -> {
                   // 开始呼叫
                   Log.d("test", "init: 开始呼叫");
-//                  mainRepository.startCall(dataModels.getSender());
+//                  mainRepository.startCall(dataModels.getSender())
 
 //                  WebSocketSingleton.getInstance().sendMessage(gson.toJson(new DataModels(dataModels.getTarget(), Utils.getLocalIpAddress(), "", DataModelType.Jump)));
 
